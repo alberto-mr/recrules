@@ -868,15 +868,17 @@ public class Evaluator {
 			// if (min != -1 || max != -1)
 			// strBin = "users_Min" + min + "_Max" + max;
 
-			String sep = "\t";
-			header = "name" + sep + "thresh" + sep + "badThresh"
-					+ sep + "relevUnknownValues" + sep + "n.users" + sep
-					+ "n.items" + sep + "MRR" + sep;
+			String sep = "\t\t\t";
+			
+			String formatStr = "%-20s %-20s %-20s %-20s %-20s";
+			String formatStr2 = "%-20s %-20s %-20s %-20s %-20s %-20s";
 
-			String outline = fileReccData + sep
-					+ this.evalRatingThresh + sep + this.negRatingThresh + sep
-					+ this.relUnknownItems + sep + count + sep + items.size()
-					+ sep + formatVal(mrr) + sep;
+			
+			header = String.format(formatStr, "name","thresh","badThresh","relevUnknownValues","n.users","n.items","MRR"); 
+			String outline = String.format(formatStr, fileReccData,this.evalRatingThresh, this.negRatingThresh,this.relUnknownItems,count,items.size(),formatVal(mrr));
+			
+			out.append(header + "\n");
+			out.append(outline + "\n\n");
 
 			for (int k : topKList) {
 				float prec = mapPrecision.get(k) / count;
@@ -893,23 +895,20 @@ public class Evaluator {
 				float item_cat_cov = mapRecommendedItemsInCatalog.get(k).size()
 						/ (float) items.size();
 
-				header += "P@" + k + sep + "R@" + k + sep + "nDCG@" + k + sep
-						+ "EBN@" + k + sep + "ILD@" + k + sep + "ItemCov@" + k
-						+ sep + "BAD_P@" + k + sep + "BAD_R@" + k + sep;
 				
-
-				outline += formatVal(prec) + sep + formatVal(rec) + sep
-						+ formatVal(ndcg) + sep + formatVal(nov) + sep
-						+ formatVal(uNov) + sep + formatVal(item_cat_cov) + sep
-						+ formatVal(BADP) + sep + formatVal(BADR) + sep;
+				header = String.format(formatStr2, "P@","R@","nDCG@","EBN@" + k, "ILD@" + k , "ItemCov@" + k, "BAD_P@" + k , "BAD_R@" + k);
+				
+				outline = String.format(formatStr2, formatVal(prec),formatVal(rec),formatVal(ndcg),formatVal(nov),formatVal(uNov), formatVal(item_cat_cov),formatVal(BADP) + sep + formatVal(BADR));
+				
+				out.append(header + "\n");
+				out.append(outline + "\n\n");
+						
+						
 				
 
 			}
 
-			if (WRITE_HEADER)
-				out.append(header + "\n");
-			out.append(outline + "\n");
-
+			
 			System.out.println(header + "\n" + outline);
 			// System.out.println("num users:" + count + ". num items:"
 			// + items.size());
