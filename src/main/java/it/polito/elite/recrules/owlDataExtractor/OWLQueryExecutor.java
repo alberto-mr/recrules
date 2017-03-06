@@ -24,7 +24,6 @@ import it.poliba.sisinflab.LODRec.fileManager.TextFileManager;
 import it.poliba.sisinflab.LODRec.itemManager.ItemTree;
 import it.poliba.sisinflab.LODRec.itemManager.PropertyIndexedItemTree;
 import it.poliba.sisinflab.LODRec.sparqlDataExtractor.QueryExecutor;
-import it.poliba.sisinflab.LODRec.sparqlDataExtractor.RDFTripleExtractor;
 import it.poliba.sisinflab.LODRec.tree.NNode;
 import it.poliba.sisinflab.LODRec.tree.NTree;
 import it.poliba.sisinflab.LODRec.utils.SynchronizedCounter;
@@ -76,7 +75,7 @@ public class OWLQueryExecutor implements Runnable {
 	}
 	
 	/**
-	 * Start RDF triple extraction for selected uri
+	 * Start OWL triple extraction for selected uri
 	 */
 	public void run(){
 		
@@ -111,7 +110,7 @@ public class OWLQueryExecutor implements Runnable {
 	
 	
 	/**
-	 * Execute RDF triple extraction
+	 * Execute OWL triple extraction
 	 */
 	private void exec(NNode node, String list_props, String uri){
 		
@@ -154,7 +153,7 @@ public class OWLQueryExecutor implements Runnable {
 	
 	
 	/**
-	 * Execute RDF triple extraction with caching
+	 * Execute OWL triple extraction with caching
 	 */
 	private void execWithCaching(NNode node, String list_props, String uri){
 		
@@ -170,14 +169,14 @@ public class OWLQueryExecutor implements Runnable {
 				
 				TObjectByteHashMap<String> result = new TObjectByteHashMap<String>();
 				
-				if(!RDFTripleExtractor.cache.containsKey(uri) || 
-						!RDFTripleExtractor.cache.get(uri).containsKey(p_index)){
+				if(!OWLTripleExtractor.cache.containsKey(uri) || 
+						!OWLTripleExtractor.cache.get(uri).containsKey(p_index)){
 					
 					result.putAll(runQuery(uri, p));
 					
 					if(result.size()>0){
 						
-						RDFTripleExtractor.cache.putIfAbsent(uri, 
+						OWLTripleExtractor.cache.putIfAbsent(uri, 
 								new ConcurrentHashMap<String, CopyOnWriteArrayList<String>>());
 						
 						for(String uri_res : result.keySet()){
@@ -189,9 +188,9 @@ public class OWLQueryExecutor implements Runnable {
 									p_index = String.valueOf(props_index.get("inv_" + p));
 							}
 							
-							RDFTripleExtractor.cache.get(uri).putIfAbsent(p_index, 
+							OWLTripleExtractor.cache.get(uri).putIfAbsent(p_index, 
 									new CopyOnWriteArrayList<String>());
-							RDFTripleExtractor.cache.get(uri).get(p_index).add(uri_res);
+							OWLTripleExtractor.cache.get(uri).get(p_index).add(uri_res);
 							
 							if(list_props.length()>0){
 								itemTree.addBranches(list_props + "-" + p_index, extractKey(uri_res));
@@ -210,7 +209,7 @@ public class OWLQueryExecutor implements Runnable {
 					
 					logger.debug("Cache: " + uri);
 					
-					for(String uri_res : RDFTripleExtractor.cache.get(uri).get(p_index)){
+					for(String uri_res : OWLTripleExtractor.cache.get(uri).get(p_index)){
 						if(list_props.length()>0){
 							itemTree.addBranches(list_props + "-" + p_index, extractKey(uri_res));
 							execWithCaching(children, list_props + "-" + p_index, uri_res);
@@ -225,8 +224,8 @@ public class OWLQueryExecutor implements Runnable {
 						
 						p_index = String.valueOf(props_index.get("inv_" + p));
 						
-						if(RDFTripleExtractor.cache.get(uri).containsKey(p_index)){
-							for(String uri_res : RDFTripleExtractor.cache.get(uri).get(p_index)){
+						if(OWLTripleExtractor.cache.get(uri).containsKey(p_index)){
+							for(String uri_res : OWLTripleExtractor.cache.get(uri).get(p_index)){
 								if(list_props.length()>0){
 									itemTree.addBranches(list_props + "-" + p_index, extractKey(uri_res));
 									execWithCaching(children, list_props + "-" + p_index, uri_res);

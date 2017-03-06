@@ -35,6 +35,7 @@ public class OWLTripleExtractor {
 	
 	private String endpoint; // endpoint ontology URI
 	private boolean inMemory;
+	private boolean rdfonly;
 	private OWLOntology ontology;
 	private OWLReasoner reasoner;
 	
@@ -66,10 +67,9 @@ public class OWLTripleExtractor {
 	
 	
 	public OWLTripleExtractor(String workingDir, String itemMetadataFile,
-			String inputItemURIsFile, String endpoint, Boolean inMemory, Boolean inverseProps,
-			Boolean outputTextFormat, Boolean outputBinaryFormat,
-			String propsFile, Boolean caching, Boolean append, int nThreads,
-			boolean jenatdb) throws OWLOntologyCreationException {
+			String inputItemURIsFile, String endpoint, Boolean inMemory, Boolean rdfonly,
+			Boolean inverseProps,Boolean outputTextFormat, Boolean outputBinaryFormat,
+			String propsFile, Boolean caching, Boolean append, int nThreads) throws OWLOntologyCreationException {
 		
 		this.workingDir=workingDir;
 		this.metadataFile = itemMetadataFile;
@@ -77,6 +77,7 @@ public class OWLTripleExtractor {
 		this.caching = caching;
 		this.endpoint = endpoint;
 		this.inMemory = inMemory;
+		this.rdfonly = rdfonly;
 		this.inputFile = inputItemURIsFile;
 		this.outputBinaryFormat = outputBinaryFormat;
 		this.outputTextFormat = outputTextFormat;

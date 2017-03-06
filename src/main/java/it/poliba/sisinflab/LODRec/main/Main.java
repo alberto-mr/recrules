@@ -6,6 +6,7 @@ import java.util.Map;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 
 import it.poliba.sisinflab.LODRec.evaluation.Evaluator;
 import it.poliba.sisinflab.LODRec.graphkernel.graphEmbedding.ItemGraphEmbedder;
@@ -18,6 +19,7 @@ import it.poliba.sisinflab.LODRec.sparqlDataExtractor.RDFTripleExtractor;
 import it.poliba.sisinflab.LODRec.sprank.itemPathExtractor.ItemPathExtractor;
 import it.poliba.sisinflab.LODRec.sprank.userPathExtractor.UserPathExtractor;
 import it.poliba.sisinflab.LODRec.utils.PropertyFileReader;
+import it.polito.elite.recrules.owlDataExtractor.OWLTripleExtractor;
 
 public class Main {
 
@@ -59,7 +61,12 @@ public class Main {
 	
 	/* -------------- DATA EXTRACTION --------------- */
 	/* ---------------------------------------------- */
-	
+	// set owlextraction=true to extract data from an ontolgy - owlextraction=false to extract data from a sparql endpoint
+	private static boolean owlextraction = true;
+	// set rdfonly = true to to consider only rdf properties - rdfonly = false to consider also owl statements
+	private static boolean rdfonly = true;
+	// set inmemory=true to load an ontology from the local memory - inmemory=false to load an ontology from the web
+	private static boolean inmemory = true;
 	// set jenatdb=false to query remote endpoint - jenatdb=true to query local dataset
 	private static boolean jenatdb = false;
 	// sparql endpoint address
@@ -276,6 +283,15 @@ public class Main {
 			
 			
 			// data extraction
+			
+			if(prop.containsKey("owlextraction"))
+				owlextraction = Boolean.parseBoolean(prop.get("owlextraction"));
+			
+			if(prop.containsKey("rdfonly"))
+				rdfonly = Boolean.parseBoolean(prop.get("rdfonly"));
+			
+			if(prop.containsKey("inmemory"))
+				inmemory = Boolean.parseBoolean(prop.get("inmemory"));
 			
 			if(prop.containsKey("itemsMetadataFile"))
 				itemsMetadataFile = workingDir + prop.get("itemsMetadataFile");
@@ -572,6 +588,15 @@ public class Main {
 			} else if (arg.compareTo("inputTestRatingFile") == 0) {
 				inputTestRatingFile = val;
 			} // data extraction
+			else if (arg.compareTo("owlextraction") == 0) {
+				owlextraction = Boolean.parseBoolean(val);
+			}
+			else if (arg.compareTo("rdfonly") == 0) {
+				rdfonly = Boolean.parseBoolean(val);
+			}
+			else if (arg.compareTo("inmemory") == 0) {
+				inmemory = Boolean.parseBoolean(val);
+			}
 			else if(arg.compareTo("itemsMetadataFile") == 0) {
 				itemsMetadataFile = val;
 			} else if(arg.compareTo("jenatdb") == 0) {
@@ -733,8 +758,9 @@ public class Main {
 
 	/**
 	 * @param args
+	 * @throws OWLOntologyCreationException 
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws OWLOntologyCreationException {
 		System.out.println("start");
 		
 		long start, stop;
@@ -758,7 +784,7 @@ public class Main {
 		// load parameters from command line
 		loadCommandParams(args);
 
-		if (dataExtraction) {
+		if (dataExtraction & !owlextraction) {
 
 			RDFTripleExtractor m = new RDFTripleExtractor(workingDir,
 					itemsMetadataFile, inputItemURIsFile, endpoint, graphURI,
@@ -773,7 +799,18 @@ public class Main {
 					+ ((stop - start) / 1000));
 
 		}
-
+		
+		if (dataExtraction & owlextraction) {
+			OWLTripleExtractor m = new OWLTripleExtractor(workingDir,
+					itemsMetadataFile, inputItemURIsFile, endpoint, inmemory,
+					rdfonly,inverseProps, outputTextFormat,
+					outputBinaryFormat, propertiesFile, caching, append, nThreads);
+			start = System.currentTimeMillis();
+			m.run();
+			stop = System.currentTimeMillis();
+			logger.info("Finished all threads. Data extraction terminated in [sec]: "
+					+ ((stop - start) / 1000));
+		}
 		// ItemPathExtractor
 		if (itemPathExtraction & recAlgorithm == 1) {
 
