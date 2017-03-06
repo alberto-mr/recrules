@@ -284,6 +284,7 @@ public class QueryExecutor implements Runnable {
 		TObjectByteHashMap<String> results = new TObjectByteHashMap<String>();
 		QueryExecution qexec = null;
 		
+		
 		if(model==null){
 			if(graphURI == null)
 				qexec = QueryExecutionFactory.sparqlService(endpoint, query); // remote query
@@ -297,6 +298,7 @@ public class QueryExecutor implements Runnable {
 		
 			//ResultSet res = qexec.execSelect();
 			ResultSet res = ResultSetFactory.copyResults(qexec.execSelect()) ;
+			
 			
 			QuerySolution qs;
 			String n;
