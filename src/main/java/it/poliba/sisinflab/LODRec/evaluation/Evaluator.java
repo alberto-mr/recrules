@@ -896,7 +896,7 @@ public class Evaluator {
 						/ (float) items.size();
 
 				
-				header = String.format(formatStr2, "P@","R@","nDCG@","EBN@" + k, "ILD@" + k , "ItemCov@" + k, "BAD_P@" + k , "BAD_R@" + k);
+				header = String.format(formatStr2, "P@"+ k,"R@"+ k,"nDCG@"+ k,"EBN@" + k, "ILD@" + k , "ItemCov@" + k, "BAD_P@" + k , "BAD_R@" + k);
 				
 				outline = String.format(formatStr2, formatVal(prec),formatVal(rec),formatVal(ndcg),formatVal(nov),formatVal(uNov), formatVal(item_cat_cov),formatVal(BADP) + sep + formatVal(BADR));
 				

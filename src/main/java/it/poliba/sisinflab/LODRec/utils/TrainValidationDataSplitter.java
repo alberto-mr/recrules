@@ -41,8 +41,8 @@ public class TrainValidationDataSplitter {
 		TIntObjectHashMap<TIntFloatHashMap> valid = new TIntObjectHashMap<TIntFloatHashMap>();
 		TIntObjectHashMap<TIntFloatHashMap> test = new TIntObjectHashMap<TIntFloatHashMap>();
 
-		this.splitRatings(train, test, testRatio, minTrainRatings);
-		// this.splitRatings(train, valid, valRatio, minValRatings);
+		//this.splitRatings(train, test, testRatio, minTrainRatings);
+		this.splitRatings(train, valid, valRatio, minValRatings);
 
 		try {
 			BufferedWriter train_file = new BufferedWriter(new FileWriter(
@@ -352,12 +352,12 @@ public class TrainValidationDataSplitter {
 		splitter.analyze("LF/feedback/TrainSetLF_65_15_20_percentile_rank_norm_reduced_v2_noNegExam", "LF/feedback/ValidSetLF_15_20_percentile_rank_norm_reduced_v2_noNegExam", "LF/feedback/TestSetLF_80_20_percentile_rank_norm_reduced_v2", "LF/itemMetadata");
 		*/
 		
-		 boolean implicit=false;
+		 boolean implicit=true;
 		 int n_users=1000000;
 		 splitter.buildTrainValTestRatings("ifttt/all",
 		 "ifttt/trainset",
-		 "ifttt/valset",
-		 "ifttt/testset", 0.2f, 0.2f, 0, 3 ,implicit, n_users);
+		 "ifttt/validationset",
+		 "ifttt/xxx", 0.20f, 0.20f, 0, 3 ,implicit, n_users);
 
 	}
 

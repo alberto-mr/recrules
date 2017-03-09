@@ -64,7 +64,7 @@ public class Main {
 	// set owlextraction=true to extract data from an ontolgy - owlextraction=false to extract data from a sparql endpoint
 	private static boolean owlextraction = true;
 	// set rdfonly = true to to consider only rdf properties - rdfonly = false to consider also owl statements
-	private static boolean rdfonly = true;
+	private static boolean rdfonly = false;
 	// set inmemory=true to load an ontology from the local memory - inmemory=false to load an ontology from the web
 	private static boolean inmemory = true;
 	// set jenatdb=false to query remote endpoint - jenatdb=true to query local dataset
@@ -137,7 +137,7 @@ public class Main {
 	// percentage of rated user items to consider in user paths extraction
 	private static int userItemsSampling = 100;
 	// user rates threshold (>)
-	private static float ratingThreshold = 3;
+	private static float ratingThreshold = 0;
 	private static boolean normalize = true;
 	
 	
@@ -849,7 +849,7 @@ public class Main {
 
 		} else if (userPathExtraction) {
 			logger.info("the recommendation algorithm you set [" + recAlgorithm
-					+ "] is not expected to compute this operation ");
+					+ "] is not expected to compute this operation "); 
 		}
 		
 		// itemGraphEmbedding

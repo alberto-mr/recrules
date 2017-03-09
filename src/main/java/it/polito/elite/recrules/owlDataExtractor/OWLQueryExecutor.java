@@ -1,6 +1,7 @@
 package it.polito.elite.recrules.owlDataExtractor;
 
 import java.util.Collection;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -9,6 +10,7 @@ import org.apache.log4j.Logger;
 import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAxiom;
+import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectPropertyAssertionAxiom;
@@ -125,7 +127,10 @@ public class OWLQueryExecutor implements Runnable {
 				
 				TObjectByteHashMap<String> result = new TObjectByteHashMap<String>();
 				
-				result.putAll(runQuery(uri, p));
+				if(p.equals("rdfType") || p.equals("owlSubClassOf"))
+					result.putAll(runOwlQuery(uri,p));
+				else
+					result.putAll(runQuery(uri, p));
 					
 				if(result.size()>0){
 					
@@ -264,6 +269,77 @@ public class OWLQueryExecutor implements Runnable {
 	}
 	
 	/**
+	 * Run OWL query 
+	 * @param     uri  resource uri
+	 * @param     p  property
+	 * @return    results map: uri-s (if uri is a subject), uri-o (if uri is an object)
+	 */
+	private TObjectByteHashMap<String> runOwlQuery(String uri, String p){
+		
+		TObjectByteHashMap<String> results = new TObjectByteHashMap<String>();
+		
+		try {	
+			if(p.equals("rdfType")){
+				OWLNamedIndividual individual = this.ontology.getOWLOntologyManager().getOWLDataFactory().getOWLNamedIndividual(IRI.create(prefix.getDefaultPrefix() + uri));			
+				results = getClasses(individual);
+			}
+			else if(p.equals("owlSubClassOf")){
+				OWLClass classInstance = this.ontology.getOWLOntologyManager().getOWLDataFactory().getOWLClass(IRI.create(prefix.getDefaultPrefix() + uri));
+				results = getSuperClasses(classInstance);
+				
+			}
+			
+		} 
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return results;
+	}
+	
+	
+	private TObjectByteHashMap<String> getSuperClasses(OWLClass classInstance) {
+		TObjectByteHashMap<String> results = new TObjectByteHashMap<String>();
+		try{
+			Set<OWLClass> classes = this.reasoner.getSuperClasses(classInstance, true).getFlattened();
+			for(OWLClass cl : classes){
+				if(!prefix.getShortForm(cl.getIRI()).substring(1).equals("Thing"))
+					results.put(prefix.getShortForm(cl.getIRI()).substring(1) , (byte) 0);
+			}
+				
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+		finally{
+			//qexec.close();
+		}
+		
+		return results;
+	}
+	
+	private TObjectByteHashMap<String> getClasses(OWLNamedIndividual individual) {
+		TObjectByteHashMap<String> results = new TObjectByteHashMap<String>();
+		try{
+			Set<OWLClass> classes = this.reasoner.getTypes(individual, true).getFlattened();
+			for(OWLClass cl : classes){
+				if(!prefix.getShortForm(cl.getIRI()).substring(1).equals("Thing"))
+					results.put(prefix.getShortForm(cl.getIRI()).substring(1) , (byte) 0);
+			}
+				
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+		finally{
+			//qexec.close();
+		}
+		
+		return results;
+	}
+
+	
+	/**
 	 * Execute SPARQL query 
 	 * @param     query  sparql query
 	 * @param     p  property
@@ -272,19 +348,18 @@ public class OWLQueryExecutor implements Runnable {
 	private TObjectByteHashMap<String> executeQuery(OWLNamedIndividual individual, OWLObjectProperty property) {
 		
 		TObjectByteHashMap<String> results = new TObjectByteHashMap<String>();
-		Collection<OWLAxiom> axioms = EntitySearcher.getReferencingAxioms(individual, ontology);				
-
+		Collection<OWLAxiom> axioms = EntitySearcher.getReferencingAxioms(individual, ontology);
 		try{
 			for(OWLAxiom axiom : axioms){
 				if(axiom.getAxiomType().equals(AxiomType.OBJECT_PROPERTY_ASSERTION)){
 					OWLObjectPropertyAssertionAxiom paxiom = (OWLObjectPropertyAssertionAxiom)axiom;
-					if(paxiom.getSubject().equals(individual)){
-						// get subject
-						results.put(paxiom.getSubject().asOWLNamedIndividual().getIRI().toString() , (byte) 1);
-					}
-					else if(paxiom.getObject().equals(individual)){
+					if(paxiom.getSubject().equals(individual) && paxiom.getProperty().asOWLObjectProperty().equals(property)){
 						// get object
-						results.put(paxiom.getObject().asOWLNamedIndividual().getIRI().toString() , (byte) 1);
+						results.put(prefix.getShortForm(paxiom.getObject().asOWLNamedIndividual().getIRI()).substring(1) , (byte) 0);
+					}
+					else if(paxiom.getObject().equals(individual) && paxiom.getProperty().asOWLObjectProperty().equals(property)){
+						// get subject
+						results.put(prefix.getShortForm(paxiom.getSubject().asOWLNamedIndividual().getIRI()).substring(1) , (byte) 1);
 					}
 				}
 			}
