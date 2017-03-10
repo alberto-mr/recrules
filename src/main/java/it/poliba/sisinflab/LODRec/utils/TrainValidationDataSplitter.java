@@ -352,9 +352,9 @@ public class TrainValidationDataSplitter {
 		splitter.analyze("LF/feedback/TrainSetLF_65_15_20_percentile_rank_norm_reduced_v2_noNegExam", "LF/feedback/ValidSetLF_15_20_percentile_rank_norm_reduced_v2_noNegExam", "LF/feedback/TestSetLF_80_20_percentile_rank_norm_reduced_v2", "LF/itemMetadata");
 		*/
 		
-		 boolean implicit=true;
+		 boolean implicit=false;
 		 int n_users=1000000;
-		 splitter.buildTrainValTestRatings("ifttt/all",
+		 splitter.buildTrainValTestRatings("ifttt/trainset",
 		 "ifttt/trainset",
 		 "ifttt/validationset",
 		 "ifttt/xxx", 0.20f, 0.20f, 0, 3 ,implicit, n_users);

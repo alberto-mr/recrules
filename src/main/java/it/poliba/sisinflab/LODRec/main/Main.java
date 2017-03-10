@@ -137,7 +137,7 @@ public class Main {
 	// percentage of rated user items to consider in user paths extraction
 	private static int userItemsSampling = 100;
 	// user rates threshold (>)
-	private static float ratingThreshold = 0;
+	private static float ratingThreshold = 3;
 	private static boolean normalize = true;
 	
 	
