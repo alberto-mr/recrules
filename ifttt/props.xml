@@ -1,33 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <props>
+
 	<prop name="hasTrigger">
-		<!-- CLASS LEVEL : CandidateEvent -->
 		<prop name="hasCandidateEvent">
-			<!-- CLASS LEVEL : Channel -->
-			<prop name="hasCategory">
-				<!-- CLASS LEVEL : Category -->
-				<prop name="hasCategory">
-					<!-- CLASS LEVEL : Channel -->
+			<prop name="hasCategory"></prop> 
+		</prop> 
+		
+		
+		
+		
+		<!-- <prop name="rdfType">
+			<prop name="owlSubClassOf">
+				<prop name="owlSubClassOf">
+					<prop name="owlSubClassOf">
+					
+					</prop>
 				</prop>
 			</prop>
-			<prop name="hasCandidateEvent"></prop>
-		</prop>
+		</prop> -->
 		
 	</prop>
 	<prop name="hasAction">
-		<!-- CLASS LEVEL : CandidateAction -->
+	
 		<prop name="hasCandidateAction">
-			<!-- CLASS LEVEL : Channel -->
-			<prop name="hasCategory">
-				<!-- CLASS LEVEL : Category -->
-				<prop name="hasCategory">
-					<!-- CLASS LEVEL : Channel -->
+			<prop name="hasCategory"></prop>
+		</prop>
+		<!--<prop name="rdfType">
+			<prop name="owlSubClassOf">
+				<prop name="owlSubClassOf">
+					<prop name="owlSubClassOf">
+					
+					</prop>
 				</prop>
 			</prop>
-			<prop name="hasCandidateAction"></prop>
-		</prop>
-		
+		</prop>-->
 	</prop>
-	
-	
 </props>

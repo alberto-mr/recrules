@@ -64,7 +64,7 @@ public class Main {
 	// set owlextraction=true to extract data from an ontolgy - owlextraction=false to extract data from a sparql endpoint
 	private static boolean owlextraction = true;
 	// set rdfonly = true to to consider only rdf properties - rdfonly = false to consider also owl statements
-	private static boolean rdfonly = false;
+	private static boolean rdfonly = true;
 	// set inmemory=true to load an ontology from the local memory - inmemory=false to load an ontology from the web
 	private static boolean inmemory = true;
 	// set jenatdb=false to query remote endpoint - jenatdb=true to query local dataset
@@ -114,7 +114,7 @@ public class Main {
 	/* ---------------------------------------------- */
 	
 	// set selectTopPaths=true to consider only popular path
-	private static boolean selectTopPaths = true;
+	private static boolean selectTopPaths = false;
 	// number of top paths to consider in paths extraction
 	private static int nTopPaths = 50;
 	// number of items to consider in top paths computation
@@ -136,7 +136,7 @@ public class Main {
 	private static int pathsInMemory = 100;
 	// percentage of rated user items to consider in user paths extraction
 	private static int userItemsSampling = 100;
-	// user rates threshold (>)
+	// user rates threshold (>) ERA 3
 	private static float ratingThreshold = 3;
 	private static boolean normalize = true;
 	

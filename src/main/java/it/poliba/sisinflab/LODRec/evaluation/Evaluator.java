@@ -81,7 +81,8 @@ public class Evaluator {
 		this.workingDir = workingDir;
 		this.evalFile = evalFile + ".txt";
 		this.itemsMetadataFile = itemMetadataFile;
-		this.itemsMetadataEvalFile = itemMetadataEvalFile;
+		//this.itemsMetadataEvalFile = itemMetadataEvalFile;
+		this.itemsMetadataEvalFile = itemMetadataFile;
 		this.trainRatingFile = trainRatingFile;
 		this.testRatingFile = testRatingFile;
 		this.evalRatingThresh = ratingThreshold;
@@ -95,7 +96,8 @@ public class Evaluator {
 	private void init() {
 
 		this.topKList = Arrays.asList(1, 5, 10, 25, 50, 100, 250);
-
+		//this.topKList = Arrays.asList(1,2);
+		
 		this.recDir = this.workingDir + "out/";
 
 		this.itemSim = new TIntObjectHashMap<TIntFloatHashMap>();
@@ -112,9 +114,11 @@ public class Evaluator {
 		computeItemSim();
 
 		logger.info(items.size() + " items loaded");
+		
+		
 		readTrainData(trainRatingFile);
 		readTestData(testRatingFile);
-
+		
 		cmpItemPopularity();
 		logger.info(testRatingFile + " - " + testRatings.size());
 
@@ -523,7 +527,7 @@ public class Evaluator {
 		this.loadRecommendations(recFile);
 		System.out.println("loaded recc from " + recFile);
 		eval(recFile, -1, -1);
-
+		
 	}
 	
 	public void loadRecommendations(String fileReccData) {
@@ -689,21 +693,25 @@ public class Evaluator {
 					// actually
 					if (testRatings.containsKey(uid)
 							& trainRatings.containsKey(uid)) {
+						
+						
 						for (int i : testRatings.get(uid).keySet()) {
 							if (testRatings.get(uid).get(i) >= evalRatingThresh)
 								relevItems.add(i);
 							if (testRatings.get(uid).get(i) <= negRatingThresh)
 								BADItems.add(i);
 						}
-
+						
+	
 						if (relevItems.size() > 0) {
 
 							users.add(uid);
-							TIntFloatHashMap user_prof = build_user_content_profile(uid);
+							//TIntFloatHashMap user_prof = build_user_content_profile(uid);
 
 							sortedRecc = recommendations.get(uid);
 							boolean found = false;
 							float rr = 0;
+							
 							for (int i = 0; i < sortedRecc.size() & !found; i++) {
 								if (relevItems.contains(sortedRecc.get(i))) {
 									rr = 1 / (float) (i + 1);
@@ -716,8 +724,7 @@ public class Evaluator {
 
 							for (int i : items) {
 								if (testRatings.get(uid).containsKey(i))
-									idealRanking.add(testRatings.get(uid)
-											.get(i));
+									idealRanking.add(testRatings.get(uid).get(i));
 								else
 									// we do not know the real relevance for
 									// this
@@ -870,12 +877,12 @@ public class Evaluator {
 
 			String sep = "\t\t\t";
 			
-			String formatStr = "%-20s %-20s %-20s %-20s %-20s";
-			String formatStr2 = "%-20s %-20s %-20s %-20s %-20s %-20s";
+			String formatStr = "%-20s %-20s %-20s %-20s %-20s %-20s %-20s %-20s";
+			String formatStr2 = "%-20s %-20s %-20s %-20s %-20s %-20s %-20s %-20s";
 
 			
-			header = String.format(formatStr, "name","thresh","badThresh","relevUnknownValues","n.users","n.items","MRR"); 
-			String outline = String.format(formatStr, fileReccData,this.evalRatingThresh, this.negRatingThresh,this.relUnknownItems,count,items.size(),formatVal(mrr));
+			header = String.format(formatStr, "name","thresh","badThresh","relevUnknownValues","n.users","n.items","MRR", ""); 
+			String outline = String.format(formatStr, fileReccData,this.evalRatingThresh, this.negRatingThresh,this.relUnknownItems,count,items.size(),formatVal(mrr), "");
 			
 			out.append(header + "\n");
 			out.append(outline + "\n\n");
@@ -898,18 +905,18 @@ public class Evaluator {
 				
 				header = String.format(formatStr2, "P@"+ k,"R@"+ k,"nDCG@"+ k,"EBN@" + k, "ILD@" + k , "ItemCov@" + k, "BAD_P@" + k , "BAD_R@" + k);
 				
-				outline = String.format(formatStr2, formatVal(prec),formatVal(rec),formatVal(ndcg),formatVal(nov),formatVal(uNov), formatVal(item_cat_cov),formatVal(BADP) + sep + formatVal(BADR));
+				outline = String.format(formatStr2, formatVal(prec),formatVal(rec),formatVal(ndcg),formatVal(nov),formatVal(uNov), formatVal(item_cat_cov),formatVal(BADP),formatVal(BADR));
 				
 				out.append(header + "\n");
 				out.append(outline + "\n\n");
 						
-						
+				System.out.println(header + "\n" + outline + "\n\n");
 				
 
 			}
 
 			
-			System.out.println(header + "\n" + outline);
+			
 			// System.out.println("num users:" + count + ". num items:"
 			// + items.size());
 			out.flush();

@@ -211,14 +211,15 @@ public class OWLTripleExtractor {
 
 			for (String uri : this.URI_ID.keySet()) {
 
-				Runnable worker;
-
+				//Runnable worker;
+				OWLQueryExecutor worker;
 				// create worker thread
 				worker = new OWLQueryExecutor(uri, URI_ID.get(uri), props, 
 						props_index, ontology, reasoner, counter, metadata_index, 
 						textWriter, fileManager, inverseProps, caching);
 				
-				executor.execute(worker);
+				//executor.execute(worker);
+				worker.run();
 
 			}
 

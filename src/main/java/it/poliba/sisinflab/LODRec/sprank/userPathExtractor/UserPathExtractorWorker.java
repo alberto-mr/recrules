@@ -34,6 +34,9 @@ public class UserPathExtractorWorker implements Runnable {
     private int user_id;
     private TIntFloatHashMap trainRatings;
     private TIntFloatHashMap validationRatings;
+    
+    private TIntFloatHashMap testRatings;
+    
     private BufferedWriter train_file;
     private BufferedWriter validation_file;
     private BufferedWriter test_file;
@@ -54,7 +57,7 @@ public class UserPathExtractorWorker implements Runnable {
      * Constuctor
      */
     public UserPathExtractorWorker(int user_id, TIntFloatHashMap trainRatings,
-                                   TIntFloatHashMap validationRatings, ArrayList<String> items_id,
+                                   TIntFloatHashMap validationRatings, TIntFloatHashMap testRatings, ArrayList<String> items_id,
                                    BufferedWriter train_file, BufferedWriter validation_file,
                                    BufferedWriter test_file, boolean normalize,
                                    THashMap<String, String> items_path_index, String path_file,
@@ -66,6 +69,10 @@ public class UserPathExtractorWorker implements Runnable {
         this.items_id = items_id;
         this.trainRatings = trainRatings;
         this.validationRatings = validationRatings;
+        
+        this.testRatings = testRatings;
+        
+        
         this.train_file = train_file;
         this.validation_file = validation_file;
         this.test_file = test_file;
@@ -78,6 +85,8 @@ public class UserPathExtractorWorker implements Runnable {
         this.ratesThreshold = ratesThreshold;
         this.items_link = items_link;
 
+        
+        //this.normalize = false;
     }
 
     /**
@@ -263,7 +272,7 @@ public class UserPathExtractorWorker implements Runnable {
         try {
             double rate = 0;
             double n = 1;
-            boolean training = false, validation = false;
+            boolean training = false, validation = false, test = false;
             DecimalFormat form = new DecimalFormat("#.####");
             form.setRoundingMode(RoundingMode.CEILING);
             StringBuffer str = new StringBuffer();
@@ -274,7 +283,7 @@ public class UserPathExtractorWorker implements Runnable {
             } else if (validationRatings.containsKey(item_id)) {
                 validation = true;
                 rate = validationRatings.get(item_id);
-            }
+            } 
 
             if (normalize)
                 n = norm(paths);
@@ -300,8 +309,14 @@ public class UserPathExtractorWorker implements Runnable {
                         str.append(i + 1 + ":" + count + " ");
 
                 }
+                
             }
-
+           
+            /*synchronized (test_file) {
+                test_file.append(str);
+                test_file.newLine();
+            }*/
+            
             if (training) {
                 synchronized (train_file) {
                     train_file.append(str);
@@ -312,7 +327,7 @@ public class UserPathExtractorWorker implements Runnable {
                     validation_file.append(str);
                     validation_file.newLine();
                 }
-            } else {
+            }else {
                 synchronized (test_file) {
                     test_file.append(str);
                     test_file.newLine();

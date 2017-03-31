@@ -30,7 +30,7 @@ import it.poliba.sisinflab.LODRec.tree.NNode;
 import it.poliba.sisinflab.LODRec.tree.NTree;
 import it.poliba.sisinflab.LODRec.utils.SynchronizedCounter;
 
-public class OWLQueryExecutor implements Runnable {
+public class OWLQueryExecutor {//implements Runnable {
 	
 	private String uri; // uri resource
 	private NTree props; // properties map

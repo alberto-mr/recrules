@@ -357,7 +357,12 @@ public class TrainValidationDataSplitter {
 		 splitter.buildTrainValTestRatings("ifttt/trainset",
 		 "ifttt/trainset",
 		 "ifttt/validationset",
-		 "ifttt/xxx", 0.20f, 0.20f, 0, 3 ,implicit, n_users);
+		 "ifttt/xxx", 0.15f, 0.20f, 0, 0 ,implicit, n_users);
+		 
+		/* splitter.buildTrainValTestRatings("ifttt/trainset",
+				 "ifttt/trainset",
+				 "ifttt/validationset",
+				 "ifttt/xxx", 0.15f, 0.20f, 1, 1 ,implicit, n_users);*/
 
 	}
 

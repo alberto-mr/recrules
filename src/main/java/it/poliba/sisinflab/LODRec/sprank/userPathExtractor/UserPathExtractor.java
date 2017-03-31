@@ -43,9 +43,16 @@ public class UserPathExtractor {
 	private TIntObjectHashMap<TIntFloatHashMap> trainRatings; 
 	// map user-[item-rating]
 	private TIntObjectHashMap<TIntFloatHashMap> validationRatings; 
+	
+	
+	private TIntObjectHashMap<TIntFloatHashMap> testRatings; 
+	
 	// map user-[item-rating]
 	private String trainRatingFile; // input user train ratings filename
 	private String validationRatingFile; // input user validation ratings filename
+	
+	private String testRatingFile;
+	
 	private boolean normalize;
 	private String path_file;
 	private String pathIndexFile;
@@ -79,6 +86,10 @@ public class UserPathExtractor {
 		this.workingDir = workingDir;
 		this.trainRatingFile = trainRatingFile;
 		this.validationRatingFile = validationRatingFile;
+		
+		this.testRatingFile = "ifttt/testset";
+				
+				
 		this.normalize = normalize;
 		this.path_file = pathFile;
 		this.itemsFile = itemMetadataFile;
@@ -123,6 +134,10 @@ public class UserPathExtractor {
 		
 		validationRatings = new TIntObjectHashMap<TIntFloatHashMap>();
 		TextFileUtils.loadInputUsersRatings(validationRatingFile, validationRatings, labels);
+		
+		
+		testRatings = new TIntObjectHashMap<TIntFloatHashMap>();
+		TextFileUtils.loadInputUsersRatings(testRatingFile, testRatings, labels);
 		
 	}
 	
@@ -170,8 +185,9 @@ public class UserPathExtractor {
 		
 		items_path_index = new THashMap<String, String>(pathReader.getFileIndex());
 		
-		long num_item_pair = (paths_in_memory * items_path_index.size()) / 100;
-		
+		//long num_item_pair = (paths_in_memory * items_path_index.size()) / 100;
+		long num_item_pair = items_path_index.size();
+
 		logger.info("Loading " + num_item_pair + " of " + items_path_index.size() +
 				" (" + paths_in_memory + "%) item pair paths in memory");
 		
@@ -242,7 +258,7 @@ public class UserPathExtractor {
 				
 				// path extraction worker user-items
 				Runnable worker = new UserPathExtractorWorker(user_id, 
-						trainRatings.get(user_id), validationRatings.get(user_id),
+						trainRatings.get(user_id), validationRatings.get(user_id), testRatings.get(user_id),
 						items_list, train_file, validation_file, test_file, 
 						normalize, items_path_index, path_file, path_index, paths, 
 						user_items_sampling, ratesThreshold, items_link);
